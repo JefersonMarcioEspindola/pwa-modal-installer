@@ -60,18 +60,15 @@ A proposta do **PWA Modal Installer** é gerar **confiança imediata**:
 
 ## Visão Geral
 
-No ecossistema móvel atual, a experiência de instalação varia drasticamente de acordo com o navegador e o sistema operacional:
+No ecossistema móvel atual, a experiência de instalação varia de acordo com o navegador e o sistema operacional:
 
-```
-       Dispositivo do Usuário
-                 │
-      ┌──────────┴──────────┐
-      ▼                     ▼
- iOS (Safari)       Android (Chromium)      Desktop (PC/Mac)
-      │                     │                     │
-  Folha inferior    Evento nativo         Modal centralizado
-  com acordeão      beforeinstallprompt   com QR Code SVG
-  e 4 passos Apple  em 1 toque            para celular
+```mermaid
+flowchart TD
+    User["Dispositivo do Usuário"] --> Platform{"Detecção Automática"}
+
+    Platform -->|"iOS (Safari)"| IOS["Folha Inferior Apple Liquid Glass<br/>Acordeão fluido e 4 passos nativos"]
+    Platform -->|"Android (Chrome)"| Android["Instalação Nativa em 1 Toque<br/>Captura de beforeinstallprompt"]
+    Platform -->|"Desktop (PC/Mac)"| Desktop["Modal Centralizado<br/>QR Code vetorial para escanear"]
 ```
 
 ---
@@ -215,23 +212,13 @@ No Safari mobile, o armazenamento de dados (`localStorage`, `sessionStorage` e c
 
 ### Fluxo Recomendado:
 
-```
-Link de Convite ou QR Code
-            │
-            ▼
-    /login?pwa=1
-            │
-            ▼
-  Abre Modal no Safari
-            │
-            ▼
-Adiciona à Tela de Início
-            │
-            ▼
-Abre pelo ícone na Tela de Início
-            │
-            ▼
-Faz Login no contêiner permanente do PWA
+```mermaid
+flowchart TD
+    Start["Link de Convite ou QR Code"] --> URL["Acesso via /login?pwa=1"]
+    URL --> Modal["Modal abre no Safari antes da autenticação"]
+    Modal --> Action["Usuário adiciona à Tela de Início"]
+    Action --> Open["Abre pelo ícone na Tela de Início"]
+    Open --> Login["Faz login único no contêiner permanente do PWA"]
 ```
 
 Ao utilizar o parâmetro `?pwa=1`, o componente detecta a intenção e abre o modal instantaneamente na página de login, antes do preenchimento de senhas.
