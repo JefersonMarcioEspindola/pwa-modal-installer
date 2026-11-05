@@ -11,6 +11,7 @@
 
 ## Sumário
 
+- [Demonstração Visual](#demonstração-visual)
 - [Visão Geral](#visão-geral)
 - [O Problema do PWA no iOS e Android](#o-problema-do-pwa-no-ios-e-android)
 - [Funcionalidades Principais](#funcionalidades-principais)
@@ -22,6 +23,24 @@
 - [Solução para Isolamento de Sessão no iOS](#solução-para-isolamento-de-sessão-no-ios)
 - [Perguntas Frequentes (FAQ)](#perguntas-frequentes-faq)
 - [Licença](#licença)
+
+---
+
+## Demonstração Visual
+
+### Mobile (Apple Safari iOS e Google Chrome Android)
+
+| iPhone iOS (Inicial) | iPhone iOS (Acordeão Expandido) | Android (1 Toque) |
+| :---: | :---: | :---: |
+| <img src="docs/images/ios-initial.png" width="270" alt="iOS Safari Inicial" /> | <img src="docs/images/ios-steps.png" width="270" alt="iOS Safari Passos Expandidos" /> | <img src="docs/images/android-prompt.png" width="270" alt="Android 1-Click" /> |
+
+<br />
+
+### Desktop (PC / Mac) e Playground
+
+| Modal Desktop (QR Code Vetorial) | Playground de Demonstração e Customização |
+| :---: | :---: |
+| <img src="docs/images/desktop-qr.png" width="460" alt="Desktop QR Code Modal" /> | <img src="docs/images/desktop-demo.png" width="460" alt="Playground de Demonstração" /> |
 
 ---
 

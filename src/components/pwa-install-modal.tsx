@@ -140,6 +140,7 @@ export interface PwaInstallModalProps {
   accentColor?: string;
   forcePlatform?: DevicePlatform;
   forceOpen?: boolean;
+  initialAccordionOpen?: boolean;
   onClose?: () => void;
   storageKey?: string;
   desktopLanIp?: string;
@@ -155,6 +156,7 @@ export function PwaInstallModal({
   accentColor = "#2563eb",
   forcePlatform,
   forceOpen,
+  initialAccordionOpen = false,
   onClose,
   storageKey = PWA_STORAGE_KEY,
   desktopLanIp = "192.168.15.5",
@@ -164,7 +166,7 @@ export function PwaInstallModal({
   const [platform, setPlatform] = useState<DevicePlatform>("desktop");
   const [browser, setBrowser] = useState<BrowserKind>("other");
   const [isOpen, setIsOpen] = useState(false);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [isAccordionOpen, setIsAccordionOpen] = useState(initialAccordionOpen);
   const [canInstallNatively, setCanInstallNatively] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -354,12 +356,12 @@ export function PwaInstallModal({
             >
               <div className="overflow-hidden">
                 <div className="mt-3.5 space-y-2 border-t border-white/10 pt-3">
-                  <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-white/60">
-                    <span>Instruções no Safari iOS</span>
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-white/60">
+                    <span className="truncate">Passos no Safari iOS</span>
                     <button
                       type="button"
                       onClick={() => setIsAccordionOpen(false)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold normal-case text-blue-400 hover:text-blue-300"
+                      className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold normal-case text-blue-400 hover:text-blue-300"
                     >
                       <AppleBackIcon size={11} />
                       <span>Voltar</span>

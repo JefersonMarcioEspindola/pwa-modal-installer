@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Smartphone,
   Check,
@@ -24,10 +24,30 @@ function GithubIcon({ size = 14 }: { size?: number }) {
 
 export default function Home() {
   const [activePlatform, setActivePlatform] = useState<DevicePlatform | null>(null);
+  const [isAccordionOpenPreview, setIsAccordionOpenPreview] = useState(false);
   const [appName, setAppName] = useState("Meu Aplicativo");
   const [appSubtitle, setAppSubtitle] = useState("App Web");
   const [accentColor, setAccentColor] = useState("#2563eb");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const preview = params.get("preview");
+    if (preview === "ios") {
+      setActivePlatform("ios");
+      setIsAccordionOpenPreview(false);
+    } else if (preview === "ios-steps") {
+      setActivePlatform("ios");
+      setIsAccordionOpenPreview(true);
+    } else if (preview === "android") {
+      setActivePlatform("android");
+      setIsAccordionOpenPreview(false);
+    } else if (preview === "desktop") {
+      setActivePlatform("desktop");
+      setIsAccordionOpenPreview(false);
+    }
+  }, []);
 
   const copyToClipboard = async (code: string, id: string) => {
     try {
@@ -274,7 +294,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           accentColor={accentColor}
           forcePlatform={activePlatform}
           forceOpen={true}
-          onClose={() => setActivePlatform(null)}
+          initialAccordionOpen={isAccordionOpenPreview}
+          onClose={() => {
+            setActivePlatform(null);
+            setIsAccordionOpenPreview(false);
+          }}
         />
       )}
     </main>
