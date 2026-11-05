@@ -2,12 +2,17 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import {
-  Check,
-  Copy,
-  Download,
-  Smartphone,
-  X,
-} from "lucide-react";
+  AppleAddIcon,
+  AppleBackIcon,
+  AppleChevronIcon,
+  AppleDotsIcon,
+  AppleShareIcon,
+  CheckIcon,
+  CloseIcon,
+  CopyIcon,
+  DownloadIcon,
+  SmartphoneIcon,
+} from "./icons";
 import {
   detectBrowser,
   detectPlatform,
@@ -18,94 +23,6 @@ import {
   type DevicePlatform,
 } from "../lib/pwa";
 import { generateQrSvg } from "../lib/qr";
-
-/* ==========================================================================
-   ÍCONES VETORIAIS NATIVOS DA APPLE (OFICIAIS)
-   Idênticos ao Safari / iOS nativo (Share Sheet, Add to Home, View More, Dots, Back).
-   ========================================================================== */
-
-export function AppleShareIcon({ className, size = 18 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={(size * 26.475) / 17.695}
-      viewBox="0 0 17.695 26.475"
-      className={className}
-      aria-hidden="true"
-    >
-      <g fill="currentColor">
-        <path d="M17.334 10.762v9.746c0 2.012-1.025 3.027-3.066 3.027H3.066C1.026 23.535 0 22.52 0 20.508v-9.746C0 8.75 1.025 7.734 3.066 7.734h2.94v1.573h-2.92c-.977 0-1.514.527-1.514 1.543v9.57c0 1.015.537 1.543 1.514 1.543h11.152c.967 0 1.524-.527 1.524-1.543v-9.57c0-1.016-.557-1.543-1.524-1.543h-2.91V7.734h2.94c2.04 0 3.066 1.016 3.066 3.028Z" />
-        <path d="M8.662 15.889c.42 0 .781-.352.781-.762V5.097l-.058-1.464.654.693 1.484 1.582a.698.698 0 0 0 .528.235c.4 0 .713-.293.713-.694 0-.205-.088-.361-.235-.508l-3.3-3.183c-.196-.196-.362-.264-.567-.264-.195 0-.361.069-.566.264L4.795 4.94a.681.681 0 0 0-.225.508c0 .4.293.694.703.694.186 0 .4-.079.538-.235l1.474-1.582.664-.693-.058 1.465v10.029c0 .41.351.762.771.762Z" />
-      </g>
-    </svg>
-  );
-}
-
-export function AppleAddIcon({ className, size = 18 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 25 25"
-      className={className}
-      aria-hidden="true"
-    >
-      <g fill="currentColor">
-        <path d="m23.40492,1.60784c-1.32504,-1.32504 -3.19052,-1.56912 -5.59644,-1.56912l-10.65243,0c-2.33622,0 -4.2017,0.24408 -5.5267,1.56912c-1.32504,1.34243 -1.56911,3.17306 -1.56911,5.50924l0,10.5827c0,2.40596 0.22665,4.254 1.55165,5.57902c1.34246,1.32501 3.19052,1.5691 5.59647,1.5691l10.60013,0c2.40592,0 4.2714,-0.24408 5.59644,-1.5691c1.325,-1.34245 1.55166,-3.17306 1.55166,-5.57902l0,-10.51293c0,-2.40596 -0.22666,-4.25401 -1.55166,-5.57901zm-0.38355,5.21289l0,11.24518c0,1.51681 -0.20924,2.94643 -1.02865,3.78327c-0.83683,0.83685 -2.30134,1.0635 -3.81815,1.0635l-11.33234,0c-1.51681,0 -2.96386,-0.22665 -3.80073,-1.0635c-0.83683,-0.83684 -1.04607,-2.26646 -1.04607,-3.78327l0,-11.19288c0,-1.5517 0.20924,-3.01617 1.02865,-3.85304c0.83687,-0.83683 2.31876,-1.04607 3.87042,-1.04607l11.28007,0c1.51681,0 2.98132,0.22666 3.81815,1.06353c0.81941,0.81941 1.02865,2.26645 1.02865,3.78327zm-10.53039,12.08205c0.64506,0 1.02861,-0.43586 1.02861,-1.13326l0,-4.34117l4.53294,0c0.66252,0 1.13326,-0.36613 1.13326,-0.99376c0,-0.64506 -0.43586,-1.02861 -1.13326,-1.02861l-4.53294,0l0,-4.53294c0,-0.6974 -0.38355,-1.13326 -1.02861,-1.13326c-0.62763,0 -0.99376,0.45332 -0.99376,1.13326l0,4.53294l-4.51552,0c-0.69737,0 -1.15069,0.38355 -1.15069,1.02861c0,0.62763 0.48817,0.99376 1.15069,0.99376l4.51552,0l0,4.34117c0,0.66252 0.36613,1.13326 0.99376,1.13326z" />
-      </g>
-    </svg>
-  );
-}
-
-export function AppleChevronIcon({ className, size = 16 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={(size * 10.395) / 16.961}
-      viewBox="0 0 16.961 10.395"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        fill="currentColor"
-        d="M8.485 10.395a.87.87 0 0 0 .657-.286l7.556-7.735a.88.88 0 0 0 .263-.628c0-.507-.381-.899-.889-.899a.97.97 0 0 0-.64.26L7.958 8.74h1.045L1.527 1.106A.92.92 0 0 0 .899.847c-.51 0-.899.392-.899.9 0 .25.102.464.265.63L7.83 10.11q.268.284.655.284"
-      />
-    </svg>
-  );
-}
-
-export function AppleDotsIcon({ className, size = 18 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      className={className}
-      aria-hidden="true"
-    >
-      <circle cx="5" cy="12" r="2.2" fill="currentColor" />
-      <circle cx="12" cy="12" r="2.2" fill="currentColor" />
-      <circle cx="19" cy="12" r="2.2" fill="currentColor" />
-    </svg>
-  );
-}
-
-export function AppleBackIcon({ className, size = 13 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={(size * 12.038) / 16.957}
-      height={size}
-      viewBox="0 0 12.038 16.957"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        fill="currentColor"
-        d="M0 8.472c0 .245.1.46.278.647l7.739 7.564c.163.174.39.261.64.261.505 0 .889-.379.889-.889a.91.91 0 0 0-.26-.636L2.19 8.472l7.097-6.947a.93.93 0 0 0 .259-.636.87.87 0 0 0-.89-.889.86.86 0 0 0-.64.261L.279 7.826A.92.92 0 0 0 0 8.472"
-      />
-    </svg>
-  );
-}
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -263,7 +180,7 @@ export function PwaInstallModal({
               appIcon
             ) : (
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-gradient-to-tr from-sky-400 to-blue-600 text-white shadow-md">
-                <Smartphone size={24} />
+                <SmartphoneIcon size={24} />
               </div>
             )}
             <div className="min-w-0">
@@ -282,7 +199,7 @@ export function PwaInstallModal({
             aria-label="Fechar instalador"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
           >
-            <X size={16} />
+            <CloseIcon size={16} />
           </button>
         </div>
 
@@ -388,7 +305,7 @@ export function PwaInstallModal({
 
             {installedSuccess ? (
               <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-white/10 p-3.5 text-xs font-medium text-white">
-                <Check size={16} />
+                <CheckIcon size={16} />
                 <span>Aplicativo instalado com sucesso!</span>
               </div>
             ) : (
@@ -399,7 +316,7 @@ export function PwaInstallModal({
                   className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
                 >
                   <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white">
-                    <Download size={20} />
+                    <DownloadIcon size={20} />
                   </div>
                   <span>Instalar aplicativo</span>
                 </button>
@@ -429,7 +346,7 @@ export function PwaInstallModal({
                   onClick={handleCopyLink}
                   className="mt-3.5 inline-flex items-center gap-1.5 rounded-full border border-white/5 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium text-white/80 transition-colors hover:bg-white/20"
                 >
-                  {copiedLink ? <Check size={12} className="text-white" /> : <Copy size={12} />}
+                  {copiedLink ? <CheckIcon size={12} className="text-white" /> : <CopyIcon size={12} />}
                   <span>{copiedLink ? "Link copiado!" : "Copiar link de instalação"}</span>
                 </button>
               </div>

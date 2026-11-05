@@ -118,15 +118,14 @@ Para evitar saltos visuais bruscos na abertura do passo a passo no iOS, o compon
 
 Copie os arquivos essenciais diretamente para dentro da sua aplicação React ou Next.js:
 
-1. Copie o componente:
-   - `src/components/pwa-install-modal.tsx` -> para a sua pasta de componentes.
+1. Copie o componente e os ícones nativos:
+   - `src/components/pwa-install-modal.tsx` -> componente principal.
+   - `src/components/icons.tsx` -> vetores nativos autocontidos.
 2. Copie os módulos auxiliares:
-   - `src/lib/pwa.ts` -> funções de detecção de sistema operacional e gatilhos.
-   - `src/lib/qr.ts` -> gerador de QR Code vetorial SVG.
-3. Instale os ícones da Lucide (opcional, caso seu projeto já não possua):
-   ```bash
-   npm install lucide-react
-   ```
+   - `src/lib/pwa.ts` -> detecção de dispositivo e ciclo de exibição.
+   - `src/lib/qr.ts` -> gerador de QR Code vetorial SVG próprio.
+
+> **Zero Dependências:** Você não precisa instalar `lucide-react`, pacotes de ícones de terceiros ou bibliotecas pesadas de QR Code. Todos os vetores necessários já estão incluídos diretamente em código TypeScript puro.
 
 ---
 
