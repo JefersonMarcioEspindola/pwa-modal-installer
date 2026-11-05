@@ -282,11 +282,9 @@ export function PwaInstallModal({
                 <button
                   type="button"
                   onClick={() => setIsAccordionOpen(true)}
-                  className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
+                  className="flex w-full items-center justify-center gap-2.5 px-4 py-3.5 text-center text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
                 >
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white">
-                    <AppleAddIcon size={20} />
-                  </div>
+                  <AppleAddIcon size={20} />
                   <span>Adicionar à Tela de Início</span>
                 </button>
               </div>
@@ -313,11 +311,9 @@ export function PwaInstallModal({
                 <button
                   type="button"
                   onClick={handleNativeInstall}
-                  className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
+                  className="flex w-full items-center justify-center gap-2.5 px-4 py-3.5 text-center text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
                 >
-                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white">
-                    <DownloadIcon size={20} />
-                  </div>
+                  <DownloadIcon size={20} />
                   <span>Instalar aplicativo</span>
                 </button>
               </div>
