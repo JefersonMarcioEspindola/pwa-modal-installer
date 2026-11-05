@@ -1,0 +1,16 @@
+{
+  "name": "PWA Modal Installer",
+  "short_name": "PWA Installer",
+  "description": "Apple Liquid Glass PWA install prompt for Next.js & React",
+  "start_url": "/?utm_source=pwa",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#1c1e2a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
