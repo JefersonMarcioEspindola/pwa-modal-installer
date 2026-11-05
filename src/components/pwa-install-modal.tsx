@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import {
-  Bell,
   Check,
   Copy,
   Download,
@@ -21,8 +20,8 @@ import {
 import { generateQrSvg } from "../lib/qr";
 
 /* ==========================================================================
-   ÍCONES VETORIAIS NATIVOS DA APPLE
-   Idênticos ao Safari / iOS nativo (Share Sheet, Add to Home, View More, Dots).
+   ÍCONES VETORIAIS NATIVOS DA APPLE (OFICIAIS)
+   Idênticos ao Safari / iOS nativo (Share Sheet, Add to Home, View More, Dots, Back).
    ========================================================================== */
 
 export function AppleShareIcon({ className, size = 18 }: { className?: string; size?: number }) {
@@ -108,23 +107,6 @@ export function AppleBackIcon({ className, size = 13 }: { className?: string; si
   );
 }
 
-export function AppleSafariIcon({ className, size = 18 }: { className?: string; size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={(size * 19.932) / 20.283}
-      viewBox="0 0 20.283 19.932"
-      className={className}
-      aria-hidden="true"
-    >
-      <g fill="currentColor">
-        <path d="M9.96 19.922c5.45 0 9.962-4.522 9.962-9.961C19.922 4.51 15.4 0 9.952 0 4.511 0 0 4.512 0 9.96c0 5.44 4.521 9.962 9.96 9.962m0-1.66A8.26 8.26 0 0 1 1.67 9.96c0-4.61 3.672-8.3 8.281-8.3 4.61 0 8.31 3.69 8.31 8.3s-3.69 8.3-8.3 8.3Z" />
-        <path d="m5.87 14.883 5.605-2.735a1.47 1.47 0 0 0 .683-.673l2.725-5.596c.312-.664-.166-1.182-.85-.84L8.447 7.764c-.302.136-.508.341-.674.673L5.03 14.043c-.312.645.196 1.152.84.84m4.09-3.72A1.19 1.19 0 0 1 8.77 9.97c0-.664.527-1.201 1.19-1.201a1.2 1.2 0 0 1 1.202 1.2c0 .655-.537 1.192-1.201 1.192Z" />
-      </g>
-    </svg>
-  );
-}
-
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -137,7 +119,6 @@ export interface PwaInstallModalProps {
   appSubtitle?: string;
   appDescription?: string;
   appIcon?: ReactNode;
-  accentColor?: string;
   forcePlatform?: DevicePlatform;
   forceOpen?: boolean;
   initialAccordionOpen?: boolean;
@@ -149,11 +130,10 @@ export interface PwaInstallModalProps {
 }
 
 export function PwaInstallModal({
-  appName = "App Web",
-  appSubtitle = "Aplicativo Oficial",
-  appDescription = "Este site possui funcionalidade de aplicativo. Adicione à Tela de Início para uma melhor experiência, tela cheia sem barras e notificações.",
+  appName = "Web Application",
+  appSubtitle = "Installation component",
+  appDescription = "Este site possui funcionalidade de aplicativo. Adicione à Tela de Início para uma melhor experiência e fácil acesso.",
   appIcon,
-  accentColor = "#2563eb",
   forcePlatform,
   forceOpen,
   initialAccordionOpen = false,
@@ -167,20 +147,15 @@ export function PwaInstallModal({
   const [browser, setBrowser] = useState<BrowserKind>("other");
   const [isOpen, setIsOpen] = useState(false);
   const [isAccordionOpen, setIsAccordionOpen] = useState(initialAccordionOpen);
-  const [canInstallNatively, setCanInstallNatively] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [hostOrigin, setHostOrigin] = useState("");
-  const [notificationPermission, setNotificationPermission] = useState<
-    NotificationPermission | "unsupported"
-  >("unsupported");
 
-  // Listener para capturar o evento nativo beforeinstallprompt do Android/Chromium
+  // Captura o evento nativo beforeinstallprompt do Android/Chromium
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
       globalDeferredPrompt = e as BeforeInstallPromptEvent;
-      setCanInstallNatively(true);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
@@ -204,14 +179,9 @@ export function PwaInstallModal({
       window.matchMedia("(display-mode: standalone)").matches ||
       (navigator as unknown as { standalone?: boolean }).standalone === true;
 
-    if (typeof Notification !== "undefined") {
-      setNotificationPermission(Notification.permission);
-    }
-
     const isDismissed = localStorage.getItem(storageKey) === "true";
     const hasTriggerParam = isPwaTriggerUrl(window.location.search);
 
-    // Avalia abertura inicial
     if (forceOpen !== undefined) {
       setIsOpen(forceOpen);
     } else if (!isStandalone) {
@@ -229,7 +199,7 @@ export function PwaInstallModal({
     try {
       localStorage.setItem(storageKey, "true");
     } catch {
-      // Ignora restrições de localStorage em modo anônimo
+      // Modo anônimo / restrições
     }
     if (onClose) onClose();
   }, [onClose, storageKey]);
@@ -249,18 +219,7 @@ export function PwaInstallModal({
         console.error("Falha ao abrir diálogo nativo:", err);
       }
     } else {
-      // Se não houver prompt nativo pronto, abre acordeão com instruções manuais
       setIsAccordionOpen(true);
-    }
-  };
-
-  const handleRequestNotification = async () => {
-    if (typeof Notification === "undefined") return;
-    try {
-      const res = await Notification.requestPermission();
-      setNotificationPermission(res);
-    } catch (err) {
-      console.error("Erro ao solicitar permissão de notificação:", err);
     }
   };
 
@@ -273,7 +232,7 @@ export function PwaInstallModal({
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
     } catch {
-      // Falha silenciosa
+      // Silencioso
     }
   };
 
@@ -293,39 +252,30 @@ export function PwaInstallModal({
         aria-hidden="true"
       />
 
-      {/* Cartão estilo Liquid Glass */}
+      {/* Cartão Apple Liquid Glass autêntico */}
       <div
-        className="relative w-full max-w-[430px] overflow-hidden rounded-[26px] border border-white/10 bg-[#1c1e2a]/85 p-5 text-white shadow-[0_16px_48px_-8px_rgba(0,0,0,0.65),inset_0_1px_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[28px] transition-all duration-300 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]"
+        className="relative w-full max-w-[420px] overflow-hidden rounded-[28px] border border-white/15 bg-[#1e202e]/85 p-5 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.22)] backdrop-blur-[32px] transition-all duration-300 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]"
       >
-        {/* Cabeçalho do App */}
+        {/* Cabeçalho */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {appIcon ? (
               appIcon
             ) : (
-              <div
-                style={{ backgroundColor: accentColor }}
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] text-white shadow-md shadow-blue-500/20"
-              >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-gradient-to-tr from-sky-400 to-blue-600 text-white shadow-md">
                 <Smartphone size={24} />
               </div>
             )}
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="truncate text-base font-semibold tracking-tight text-white">
-                  {appName}
-                </h2>
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium tracking-wide text-white/70">
-                  {appSubtitle}
-                </span>
-              </div>
+              <h2 className="truncate text-[16px] font-semibold tracking-tight text-white">
+                {appName}
+              </h2>
               <p className="truncate text-xs text-white/50">
-                {hostOrigin ? hostOrigin.replace(/^https?:\/\//, "") : "app web"}
+                {appSubtitle}
               </p>
             </div>
           </div>
 
-          {/* Botão Fechar discreto */}
           <button
             type="button"
             onClick={handleClose}
@@ -336,18 +286,18 @@ export function PwaInstallModal({
           </button>
         </div>
 
-        <div className="my-3.5 h-px bg-white/10" />
+        <div className="my-4 h-px bg-white/10" />
 
         {/* ====================================================================
-            FLUXO IOS / APPLE (Liquid Glass Accordion)
+            FLUXO IOS / APPLE (Liquid Glass Fiel ao Design Nativo da Apple)
             ==================================================================== */}
         {platform === "ios" && (
           <div>
-            <p className="text-xs leading-relaxed text-white/80">
+            <p className="text-[13px] leading-relaxed text-white/80">
               {appDescription}
             </p>
 
-            {/* Acordeão Apple com transição fluida de altura via CSS Grid */}
+            {/* Acordeão com transição fluida de altura via CSS Grid */}
             <div
               className="grid transition-[grid-template-rows] duration-400 ease-[cubic-bezier(0.32,0.72,0,1)]"
               style={{
@@ -355,114 +305,72 @@ export function PwaInstallModal({
               }}
             >
               <div className="overflow-hidden">
-                <div className="mt-3.5 space-y-2 border-t border-white/10 pt-3">
-                  <div className="flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-white/60">
-                    <span className="truncate">Passos no Safari iOS</span>
-                    <button
-                      type="button"
-                      onClick={() => setIsAccordionOpen(false)}
-                      className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold normal-case text-blue-400 hover:text-blue-300"
-                    >
-                      <AppleBackIcon size={11} />
-                      <span>Voltar</span>
-                    </button>
+                <div className="pt-4 space-y-3.5">
+                  {/* Passo 1 */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white shadow-inner">
+                      <AppleDotsIcon size={20} />
+                    </div>
+                    <p className="text-[13px] font-medium text-white/90">
+                      Toque no menu se não vir o Compartilhar
+                    </p>
                   </div>
 
-                  <div className="space-y-2 pt-1">
-                    {/* Passo 1: Menu de 3 pontos para navegadores terceiros */}
-                    <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 transition-colors">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">
-                        <AppleDotsIcon size={18} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-white">
-                          1. Toque no menu se não vir o Compartilhar
-                        </p>
-                        <p className="text-[11px] text-white/50">
-                          No Chrome, Edge ou redes sociais toque nos três pontinhos.
-                        </p>
-                      </div>
+                  {/* Passo 2 */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white shadow-inner">
+                      <AppleShareIcon size={19} />
                     </div>
-
-                    {/* Passo 2: Compartilhar */}
-                    <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 transition-colors">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
-                        <AppleShareIcon size={18} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-white">
-                          2. Toque em Compartilhar
-                        </p>
-                        <p className="text-[11px] text-white/50">
-                          Na barra inferior do Safari ou no menu aberto.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Passo 3: Rolar opções */}
-                    <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 transition-colors">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white">
-                        <AppleChevronIcon size={16} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-white">
-                          3. Role para baixo na folha de opções
-                        </p>
-                        <p className="text-[11px] text-white/50">
-                          Role as ações do sistema até localizar a opção abaixo.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Passo 4: Adicionar à Tela de Início */}
-                    <div className="flex items-center gap-3 rounded-xl bg-white/5 p-2.5 transition-colors">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
-                        <AppleAddIcon size={18} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-white">
-                          4. Adicionar à Tela de Início
-                        </p>
-                        <p className="text-[11px] text-white/50">
-                          Toque e depois confirme em &quot;Adicionar&quot; no canto superior direito.
-                        </p>
-                      </div>
-                    </div>
+                    <p className="text-[13px] font-medium text-white/90">
+                      Toque em Compartilhar na barra de navegação
+                    </p>
                   </div>
 
-                  {/* Botões de Ação do Acordeão Aberto */}
-                  <div className="flex gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-500/90 py-2.5 text-xs font-semibold text-white transition-transform active:scale-[0.98]"
-                    >
-                      <Check size={14} />
-                      <span>Já adicionei à tela</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="rounded-xl bg-white/10 px-4 py-2.5 text-xs font-medium text-white/70 hover:bg-white/15"
-                    >
-                      Fechar
-                    </button>
+                  {/* Passo 3 */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white shadow-inner">
+                      <AppleChevronIcon size={16} />
+                    </div>
+                    <p className="text-[13px] font-medium text-white/90">
+                      Role e toque em &quot;Ver mais&quot;
+                    </p>
                   </div>
+
+                  {/* Passo 4 */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white shadow-inner">
+                      <AppleAddIcon size={19} />
+                    </div>
+                    <p className="text-[13px] font-medium text-white/90">
+                      Toque em &quot;Adicionar à Tela de Início&quot;
+                    </p>
+                  </div>
+
+                  {/* Botão Voltar Apple nativo */}
+                  <button
+                    type="button"
+                    onClick={() => setIsAccordionOpen(false)}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/5 bg-white/[0.08] py-3 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.12] active:bg-white/[0.16]"
+                  >
+                    <AppleBackIcon size={11} />
+                    <span>Voltar</span>
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Botão Primário quando o Acordeão está fechado */}
+            {/* Botão Inset Grouped Action Sheet oficial da Apple */}
             {!isAccordionOpen && (
-              <div className="mt-4">
+              <div className="mt-5 overflow-hidden rounded-[18px] border border-white/5 bg-white/[0.08] backdrop-blur-md">
                 <button
                   type="button"
                   onClick={() => setIsAccordionOpen(true)}
-                  style={{ backgroundColor: accentColor }}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform active:scale-[0.98]"
+                  className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
                 >
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white">
+                    <AppleAddIcon size={20} />
+                  </div>
                   <span>Adicionar à Tela de Início</span>
-                  <AppleAddIcon size={16} />
                 </button>
               </div>
             )}
@@ -474,41 +382,27 @@ export function PwaInstallModal({
             ==================================================================== */}
         {platform === "android" && (
           <div>
-            <p className="text-xs leading-relaxed text-white/80">
+            <p className="text-[13px] leading-relaxed text-white/80">
               {appDescription}
             </p>
 
             {installedSuccess ? (
-              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-emerald-500/20 p-3 text-xs font-medium text-emerald-300">
+              <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-white/10 p-3.5 text-xs font-medium text-white">
                 <Check size={16} />
                 <span>Aplicativo instalado com sucesso!</span>
               </div>
             ) : (
-              <div className="mt-4 space-y-2">
+              <div className="mt-5 overflow-hidden rounded-[18px] border border-white/5 bg-white/[0.08] backdrop-blur-md">
                 <button
                   type="button"
                   onClick={handleNativeInstall}
-                  style={{ backgroundColor: accentColor }}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform active:scale-[0.98]"
+                  className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left text-[15px] font-medium text-white transition-colors hover:bg-white/[0.06] active:bg-white/[0.12]"
                 >
-                  <Download size={16} />
-                  <span>Instalar aplicativo</span>
-                  <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-medium">
-                    1 toque
-                  </span>
-                </button>
-
-                {/* Alternativa se o navegador não emitir beforeinstallprompt */}
-                {isAccordionOpen && (
-                  <div className="mt-3 space-y-2 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/70">
-                    <p className="font-semibold text-white">Instalação manual no Chrome:</p>
-                    <ol className="list-decimal space-y-1 pl-4 text-[11px]">
-                      <li>Toque no menu de três pontos verticais (⋮) no canto superior direito.</li>
-                      <li>Toque na opção &quot;Instalar aplicativo&quot; ou &quot;Adicionar à tela inicial&quot;.</li>
-                      <li>Confirme em &quot;Instalar&quot;.</li>
-                    </ol>
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center text-white">
+                    <Download size={20} />
                   </div>
-                )}
+                  <span>Instalar aplicativo</span>
+                </button>
               </div>
             )}
           </div>
@@ -519,43 +413,35 @@ export function PwaInstallModal({
             ==================================================================== */}
         {platform === "desktop" && (
           <div>
-            <p className="text-xs leading-relaxed text-white/80">
-              Aponte a câmera do seu smartphone (iPhone ou Android) para o QR Code abaixo para abrir e instalar o aplicativo na tela inicial do celular.
+            <p className="text-[13px] leading-relaxed text-white/80">
+              Aponte a câmera do seu smartphone (iPhone ou Android) para o QR Code abaixo para abrir e instalar na tela inicial do celular.
             </p>
 
             {showQrOnDesktop && (
-              <div className="my-4 flex flex-col items-center justify-center">
+              <div className="my-5 flex flex-col items-center justify-center">
                 <div
                   className="rounded-2xl bg-white p-3 shadow-lg"
                   dangerouslySetInnerHTML={{ __html: qrSvg }}
                 />
 
-                <div className="mt-3 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-[11px] font-medium text-white/80 hover:bg-white/20"
-                  >
-                    {copiedLink ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                    <span>{copiedLink ? "Link copiado!" : "Copiar link de instalação"}</span>
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="mt-3.5 inline-flex items-center gap-1.5 rounded-full border border-white/5 bg-white/10 px-3.5 py-1.5 text-[11px] font-medium text-white/80 transition-colors hover:bg-white/20"
+                >
+                  {copiedLink ? <Check size={12} className="text-white" /> : <Copy size={12} />}
+                  <span>{copiedLink ? "Link copiado!" : "Copiar link de instalação"}</span>
+                </button>
               </div>
             )}
 
-            <div className="rounded-xl bg-white/5 p-2.5 text-center text-[11px] text-white/60">
-              No iPhone abra com o Safari; no Android utilize o Google Chrome.
-            </div>
-
-            <div className="mt-3">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="w-full rounded-xl bg-white/10 py-2.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/20"
-              >
-                Continuar no navegador do computador
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="mt-2 flex w-full items-center justify-center rounded-2xl border border-white/5 bg-white/[0.08] py-3 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.12] active:bg-white/[0.16]"
+            >
+              <span>Continuar no computador</span>
+            </button>
           </div>
         )}
       </div>

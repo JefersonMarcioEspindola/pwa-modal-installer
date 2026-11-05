@@ -2,6 +2,11 @@
 
 @layer base {
   :root {
-    --color-scheme: dark;
+    --color-scheme: light;
+  }
+
+  body {
+    background-color: #fbfbfd;
+    color: #1d1d1f;
   }
 }

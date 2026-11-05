@@ -1,17 +1,19 @@
 # PWA Modal Installer
 
-> Componente de instalação de Progressive Web App (PWA) no estilo Apple Liquid Glass para Next.js e React. Conta com animação de altura em acordeão via CSS Grid, ícones vetoriais nativos do iOS Safari, captura nativa de `beforeinstallprompt` no Android e QR Code vetorial autocontido no Desktop.
+> Componente de instalação de Progressive Web App (PWA) no padrão nativo da Apple para Next.js e React. Construído com efeito de vidro Liquid Glass, transição fluida em acordeão via CSS Grid, ícones oficiais do Safari iOS, captura nativa de `beforeinstallprompt` no Android e QR Code vetorial autocontido no Desktop.
 
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15%20%7C%2016-black.svg)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4%20%2F%20v3.4-38bdf8.svg)](https://tailwindcss.com/)
+[![Keywords](https://img.shields.io/badge/keywords-pwa%20%7C%20apple%20%7C%20safari--ios%20%7C%20liquid--glass-gray.svg)](#palavras-chave-e-descoberta-seo)
 
 ---
 
 ## Sumário
 
 - [Demonstração Visual](#demonstração-visual)
+- [Filosofia de Design: Confiança em vez de Intrusão](#filosofia-de-design-confiança-em-vez-de-intrusão)
 - [Visão Geral](#visão-geral)
 - [O Problema do PWA no iOS e Android](#o-problema-do-pwa-no-ios-e-android)
 - [Funcionalidades Principais](#funcionalidades-principais)
@@ -22,6 +24,7 @@
 - [Troca de Logo e Customização Visual](#troca-de-logo-e-customização-visual)
 - [Solução para Isolamento de Sessão no iOS](#solução-para-isolamento-de-sessão-no-ios)
 - [Perguntas Frequentes (FAQ)](#perguntas-frequentes-faq)
+- [Palavras-chave e Descoberta (SEO)](#palavras-chave-e-descoberta-seo)
 - [Licença](#licença)
 
 ---
@@ -38,17 +41,26 @@
 
 ### Desktop (PC / Mac) e Playground
 
-| Modal Desktop (QR Code Vetorial) | Playground de Demonstração e Customização |
+| Modal Desktop (QR Code Vetorial) | Playground de Demonstração (Clean White) |
 | :---: | :---: |
 | <img src="docs/images/desktop-qr.png" width="460" alt="Desktop QR Code Modal" /> | <img src="docs/images/desktop-demo.png" width="460" alt="Playground de Demonstração" /> |
 
 ---
 
+## Filosofia de Design: Confiança em vez de Intrusão
+
+A maioria dos pop-ups de instalação de PWA na web falham porque parecem banners publicitários agressivos, gerando desconfiança e fechamento imediato por parte do usuário.
+
+A proposta do **PWA Modal Installer** é gerar **confiança imediata**:
+1. **Parece feito pela própria Apple:** Utiliza o efeito translúcido escuro Liquid Glass, as cores neutras de vidro do iOS, tipografia limpa e os ícones vetoriais extraídos do próprio sistema.
+2. **Sem botões coloridos chamativos ou artificiais:** O botão de adicionar à tela de início segue a estética Action Sheet do iOS (superfície de vidro translúcido com texto branco e ícone sutil à esquerda).
+3. **Não bloqueia a navegação:** No celular, o modal repousa delicadamente como uma folha inferior (`bottom sheet`), permitindo que a pessoa veja a página ao fundo antes de decidir instalar.
+
+---
+
 ## Visão Geral
 
-A maioria das bibliotecas de instalação de PWA tenta aplicar uma janela genérica que parece deslocada do sistema operacional do usuário. No iOS Safari, a experiência falha porque a Apple não disponibiliza uma API nativa de instalação programática.
-
-O **PWA Modal Installer** foi desenhado com base nos padrões visuais do iOS (efeito Liquid Glass com specular highlights, translucidez escura e ícones oficiais extraídos da interface do sistema), proporcionando uma experiência indistinguível de um aplicativo nativo.
+No ecossistema móvel atual, a experiência de instalação varia drasticamente de acordo com o navegador e o sistema operacional:
 
 ```
        Dispositivo do Usuário
@@ -57,30 +69,31 @@ O **PWA Modal Installer** foi desenhado com base nos padrões visuais do iOS (ef
       ▼                     ▼
  iOS (Safari)       Android (Chromium)      Desktop (PC/Mac)
       │                     │                     │
-  Acordeão com      Evento nativo         Modal centralizado
-  ícones Apple      beforeinstallprompt   com QR Code SVG
-  e 4 passos        em 1 toque            para escanear
+  Folha inferior    Evento nativo         Modal centralizado
+  com acordeão      beforeinstallprompt   com QR Code SVG
+  e 4 passos Apple  em 1 toque            para celular
 ```
 
 ---
 
 ## O Problema do PWA no iOS e Android
 
-1. **No iOS (Safari):** Não existe o evento `beforeinstallprompt`. A única forma de adicionar à tela inicial é abrindo a folha de compartilhamento (Share Sheet) e selecionando "Adicionar à Tela de Início". Sem instruções visuais claras e ícones idênticos aos do sistema, a taxa de desistência é superior a 80%.
+1. **No iOS (Safari):** A Apple não oferece o evento `beforeinstallprompt`. A única maneira de instalar é tocar no botão Compartilhar da barra do navegador e rolar até "Adicionar à Tela de Início". Sem instruções visuais idênticas às do sistema operacional, a desistência supera 80%.
 2. **Isolamento de Sessão no iOS:** O Safari e a Web App instalada rodam em contêineres de cookies separados. Se o usuário fizer login no navegador e só depois adicionar o PWA à tela inicial, ele terá que fazer login novamente. A solução recomendada é conduzir o usuário à instalação já na tela de login ou pré-onboarding (`/login?pwa=1`).
-3. **No Android:** O navegador Google Chrome suporta `beforeinstallprompt`, permitindo instalar o aplicativo com um único toque, sem necessidade de navegar por menus.
+3. **No Android:** O Google Chrome dispara o evento `beforeinstallprompt`, permitindo instalar o aplicativo com um único toque direto no diálogo nativo do Android.
 
 ---
 
 ## Funcionalidades Principais
 
-- **Visual Apple Liquid Glass:** Efeito Aqua moderno com `backdrop-blur-[28px]`, fundo translúcido `bg-[#1c1e2a]/85` e borda especular suave.
-- **Folha Inferior Adaptativa no Celular:** Ancorada na base da tela (`bottom-0`) respeitando a margem segura (`env(safe-area-inset-bottom)`), permitindo que o usuário visualize o contexto da página ao fundo.
-- **Transição de Altura sem Layout Shift:** Acordeão fluido animado puramente com CSS Grid (`grid-template-rows: 0fr -> 1fr`) e curva cúbica Apple (`cubic-bezier(0.32, 0.72, 0, 1)`), sem medições pesadas em JavaScript.
-- **Ícones Vetoriais Nativos:** Inclui os vetores oficiais do botão Compartilhar do Safari, botão de Três Pontos, Seta de Rolagem e Adicionar à Tela de Início.
-- **Android 1-Click Install:** Gancho automático para capturar e disparar o diálogo nativo do sistema quando suportado.
-- **Desktop QR Code Zero-Dependency:** Gerador de QR Code vetorial próprio em SVG de 15 KB, sem carregar dependências externas de centenas de kilobytes.
-- **Suporte a Rede Local (LAN IP):** Durante o desenvolvimento local (`localhost`), o QR Code gera a URL com o IP da máquina na rede Wi-Fi, permitindo testar diretamente no celular físico.
+- **Visual Apple Liquid Glass:** Translucidez escura `bg-[#1e202e]/85`, `backdrop-blur-[32px]`, specular highlight superior e sombra suave de profundidade.
+- **Folha Inferior Adaptativa:** Ancorada na base da tela (`bottom-0`) respeitando a margem segura (`env(safe-area-inset-bottom)`).
+- **Transição de Altura em Acordeão:** Transição fluida de altura puramente via CSS Grid (`grid-template-rows: 0fr -> 1fr`) com a curva de animação cúbica oficial da Apple (`cubic-bezier(0.32, 0.72, 0, 1)`), sem travamentos e sem medições de layout em JavaScript.
+- **Ícones Oficiais Apple:** Ícones vetoriais de Compartilhar, Menu de 3 Pontos, Rolagem e Adicionar à Tela de Início.
+- **Passos em Bolhas Translúcidas:** Indicadores visuais circulares em vidro fosco idênticos ao layout da biblioteca de referência.
+- **Android 1-Click Install:** Captura e aciona o diálogo nativo do sistema operacional.
+- **Desktop QR Code Zero-Dependency:** Gerador de QR Code vetorial em SVG de 15 KB, sem carregar bibliotecas externas pesadas.
+- **Suporte a Rede Local (LAN IP):** Durante o desenvolvimento local (`localhost`), o QR Code gera a URL com o IP da máquina na rede Wi-Fi, permitindo escanear e testar diretamente no iPhone ou Android físico.
 
 ---
 
@@ -94,7 +107,7 @@ Para evitar saltos visuais bruscos na abertura do passo a passo no iOS, o compon
   style={{ gridTemplateRows: isAccordionOpen ? "1fr" : "0fr" }}
 >
   <div className="overflow-hidden">
-    {/* Conteúdo dos 4 passos com ícones oficiais */}
+    {/* Conteúdo dos 4 passos em vidro fosco */}
   </div>
 </div>
 ```
@@ -103,7 +116,7 @@ Para evitar saltos visuais bruscos na abertura do passo a passo no iOS, o compon
 
 ## Instalação Rápida (Drop-in)
 
-Este repositório foi estruturado para que você possa copiar os arquivos essenciais diretamente para dentro da sua aplicação React ou Next.js:
+Copie os arquivos essenciais diretamente para dentro da sua aplicação React ou Next.js:
 
 1. Copie o componente:
    - `src/components/pwa-install-modal.tsx` -> para a sua pasta de componentes.
@@ -139,7 +152,6 @@ export default function RootLayout({
         <PwaInstallModal
           appName="Meu Produto"
           appSubtitle="Aplicativo Oficial"
-          accentColor="#2563eb"
         />
       </body>
     </html>
@@ -153,15 +165,15 @@ export default function RootLayout({
 
 | Propriedade | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `appName` | `string` | `"App Web"` | Nome principal exibido no cabeçalho do cartão |
-| `appSubtitle` | `string` | `"Aplicativo Oficial"` | Etiqueta / badge ao lado do nome |
-| `appDescription` | `string` | Texto padrão | Mensagem explicativa exibida antes do acordeão |
+| `appName` | `string` | `"Web Application"` | Nome principal exibido no cabeçalho do cartão |
+| `appSubtitle` | `string` | `"Installation component"` | Subtítulo ou categoria ao lado do nome |
+| `appDescription` | `string` | Texto padrão | Mensagem explicativa inicial do modal |
 | `appIcon` | `ReactNode` | Ícone padrão | Componente visual ou elemento `<img>` com o logo do app |
-| `accentColor` | `string` | `"#2563eb"` | Cor dos botões principais e destaques |
 | `forcePlatform` | `"ios" \| "android" \| "desktop"` | `undefined` | Permite forçar um modo para visualização e testes |
 | `forceOpen` | `boolean` | `undefined` | Controla externamente se o modal está aberto |
-| `onClose` | `() => void` | `undefined` | Callback acionado ao fechar ou confirmar instalação |
-| `storageKey` | `string` | `"pwa_modal_dismissed"` | Chave no `localStorage` para memorizar se o usuário dispensou |
+| `initialAccordionOpen` | `boolean` | `false` | Inicia o acordeão aberto (útil para previews e testes) |
+| `onClose` | `() => void` | `undefined` | Callback acionado ao fechar |
+| `storageKey` | `string` | `"pwa_modal_dismissed"` | Chave no `localStorage` para memorizar dispensa |
 | `desktopLanIp` | `string` | `"192.168.15.5"` | IP da máquina local para testes do QR Code via Wi-Fi |
 | `showQrOnDesktop`| `boolean` | `true` | Exibe o QR Code ao abrir em computadores |
 | `customInstallUrl` | `string` | `undefined` | Sobrescreve a URL destino gerada no QR Code |
@@ -170,7 +182,7 @@ export default function RootLayout({
 
 ## Troca de Logo e Customização Visual
 
-Para utilizar a sua própria identidade visual e logotipo:
+Para utilizar a sua própria identidade visual:
 
 ```tsx
 import Image from "next/image";
@@ -181,7 +193,6 @@ export function CustomPwaPrompt() {
     <PwaInstallModal
       appName="Acme Studio"
       appSubtitle="Produtividade"
-      accentColor="#10b981"
       appIcon={
         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[14px] shadow-md">
           <Image
@@ -244,6 +255,20 @@ function abrirInstalador() {
   window.dispatchEvent(new CustomEvent("pwa:open-install"));
 }
 ```
+
+---
+
+## Palavras-chave e Descoberta (SEO)
+
+Para facilitar a indexação em buscas no GitHub e motores de busca por IA (Perplexity, ChatGPT, Claude, Gemini, Google Search):
+
+- **Tópicos GitHub:** `pwa`, `apple-design`, `liquid-glass`, `safari-ios`, `add-to-home-screen`, `react-pwa-install`, `nextjs-pwa`, `beforeinstallprompt`, `ios-pwa-prompt`, `ios-native-dialog`.
+- **Casos de Uso Comuns:**
+  - Como criar modal de instalação de PWA para Safari no iOS em React e Next.js.
+  - Prompts não intrusivos de instalação de Progressive Web App com estilo Apple.
+  - Como lidar com o evento beforeinstallprompt no Android e instruções no iPhone.
+  - Resolução do problema de isolamento de cookies e sessão no PWA iOS.
+  - Animação de acordeão de altura em CSS Grid para folhas de ação mobile.
 
 ---
 
